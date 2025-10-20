@@ -1,6 +1,6 @@
 <html>
 <hesd>
-    <title>css漸層</title>
+    <title>css漸層-線性漸層</title>
     <style>
         #d1{
             height:100px;
@@ -14,10 +14,68 @@
             width: 400px;
             background: linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet );
         }
-        #d2{
+        #d3{
             height:50px;
             width: 400px;
-            background: linear-gradient(90deg,red,orange,,violet );
+            background: linear-gradient(90deg,red,orange,violet );
+        }
+        #d4{
+            height:50px;
+            width: 400px;
+            background: linear-gradient(90deg,red,white 33%,white 66%,blue );
+        }
+        #d5{
+            height:50px;
+            width: 400px;
+            #a3{
+            height:200px;
+            width: 400px;
+            background: linear-gradient(90deg,red,white 33%,red );
+        }
+        @keyframes k4 {
+            0% { background: linear-gradient(circle,gray 30%,white 35%,gray 40%  );  }
+            8% { background: linear-gradient( circle,gray 30%,white 35%,gray 40% ); }
+            17% { background: linear-gradient( circle,gray 30%,white 35%,gray 40% ); }
+            25% { background: linear-gradient( circle,gray 30%,white 35%,gray 40% ); }
+            33% { background: linear-gradient( circle,gray 30%,white 35%,gray 40% ); }
+           
+        }
+;
+        }
+        /* 輻射狀漸層 */
+        #d6{
+            height:200px;
+            width: 400px;
+            background: radial-gradient(yellow,white,black );
+        }
+        #d7{
+            height:200px;
+            width: 400px;
+            background: radial-gradient(circle,yellow,white 30%,black );
+        }
+        #d8{
+            height:200px;
+            width: 400px;
+            background: repeating-radial-gradient(circle,gray 25%,white 30%,gray 35% );
+        }
+        /* 圓錐狀漸層 */
+        #d9{
+            height:200px;
+            width: 200px;
+            background: conic-gradient(red,green,blue,red );
+            display: inline-block;
+        }
+        #d10{
+            height:200px;
+            width: 200px;
+            background: conic-gradient(from 90deg,red,green,blue,red );
+            display: inline-block;
+        }
+        #d11{
+            height:200px;
+            width: 200px;
+            background: repeating-conic-gradient(from 90deg,red 30%,white 35%,red 40%);
+            display: inline-block;
         }
 
 
@@ -27,6 +85,14 @@
     <div id="d1"></div>
     <div id="d2"></div>
     <div id="d3"></div>
+    <div id="d4"></div>
+    <div id="d5"></div>
+    <div id="d6"></div>
+    <div id="d7"></div>
+    <div id="d8"></div>
+    <div id="d9"></div>
+    <div id="d10"></div>
+    <div id="d11"></div>
 </body>
 
 </html>
