@@ -15,10 +15,10 @@
             var card=event.target;
             if(p1<0) {
                 p1=card;
-                card.src=`pic/pic/pic/${card.num}.png`;
+                card.src=`pic/pic/${card.num}.png`;
             } else if(p2<0) {
                 p2=card;
-                card.src=`pic/pic/pic/${card.num}.png`;
+                card.src=`pic/pic/${card.num}.png`;
                 if(p1.num == p2.num) {
                     pairs++;
                     if(pairs<6) {
@@ -28,8 +28,8 @@
                     }
                 } else {
                     setTimeout(()=>{
-                        p1.src=`pic/pic/pic/Q.png`;
-                        p2.src=`pic/pic/pic/Q.png`;
+                        p1.src=`pic/pic/Q.png`;
+                        p2.src=`pic/pic/Q.png`;
                         p1=-1; p2=-1;
                     },1000);
                 }
@@ -47,7 +47,7 @@
             cards.forEach((n)=>{
                 var a=document.createElement("img");
                 a.className="card";
-                a.src=`pic/pic/pic/${n}.png`;
+                a.src=`pic/pic/${n}.png`;
                 a.num=n;
                 a.addEventListener("click",pickCard);
                 board.appendChild(a);
@@ -55,7 +55,7 @@
 
             setTimeout(()=>{
                 Array.from(document.getElementsByClassName("card")).forEach((a)=>{
-                    a.src="pic/pic/pic/Q.png";
+                    a.src="pic/pic/Q.png";
                 });
             },3000);
         }
