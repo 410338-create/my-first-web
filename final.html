@@ -1,8 +1,185 @@
 <html>
 <head>
-    <title>final-期末作業小遊戲</title>
+    <title>期末小遊戲</title>
     <style>
-        
+        #spaces {
+            width:800px;
+            height:800px;
+            background:url("pic/pic/pic/up.jpg");
+            animation: bg_move 2s linear infinite;
+            position: relative;
+        }
+        @keyframes bg_move {
+            0% {background-position-y: 0px;}
+            100% {background-position-y: 216px;}
+        }
+        #ship{
+            width: 40px;
+            height: 60px;
+            background: url("pic/pic/pic/ship.png");
+            background-size: 40px 60px;
+            position: absolute;
+        }
+        .sit {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+        }
+
     </style>
+    <script>
+        function game_init() {
+            show_ranking();
+            dir={"ArrowLeft":0,"ArrowRight":0,"ArrowUp":0,"ArrowDown":0}
+            spaces={w:800,h:800}; //自定義一個物件
+            ship=document.getElementById("ship");
+            ship.w=40;
+            ship.h=60;
+            ship.posX=(spaces.w-ship.w)/2;
+            ship.posY=spaces.h-ship.h;
+            ship.style.left=ship.posX+"px";
+            ship.style.top=ship.posY+"px";
+            ship.move=setInterval(ship_move,5);
+            game_score=0;
+            document.getElementById("score").innerHTML=game_score;
+            game_time=0;
+            document.getElementById("game_time").innerHTML=game_time;
+            game_timer=setInterval(function(){
+                game_time++;
+                document.getElementById("game_time").innerHTML=game_time;
+            },1000);
+            Array.from(document.getElementsByClassName("sit")).forEach((space)=>{
+                s.pace.remove();
+            });
+            sit_creater=setInterval(sit_create,1000);
+            game_starting=true;
+            document.getElementById("restart").style.display="none";
+        }
+        function game_over() {
+            game_starting=false;
+            clearInterval(ship.move);
+            clearInterval(sit_creater);
+            clearInterval(game_timer);
+            document.getElementById("space").style.animationPlayState="paused";
+            Array.from(document.getElementsByClassName("sit")).forEach((s)=>{
+                clearInterval(s.move);
+            });
+            document.getElementById("restart").style.display="block";
+            do_ranking();
+        }
+              function mykeydown() {
+            event.preventDefault();
+             if(Object.keys(dir).includes(event.key)) {
+            //} else if(event.key == "ArrowLeft" || event.key == "ArrowRight") {
+                dir[event.key]=1;
+            }
+        }
+        function mykeyup() {
+            event.preventDefault();
+            if(Object.keys(dir).includes(event.key)) {
+                dir[event.key]=0;
+            }
+        }
+        function getRand(min,max) {
+            return Math.floor(Math.random() * (max-min+1)) + min;
+        }
+        function mykeyup() {
+            event.preventDefault();
+            if(Object.keys(dir).includes(event.key)) {
+                dir[event.key]=0;
+            }
+        }
+        function getRand(min,max) {
+            return Math.floor(Math.random() * (max-min+1)) + min;
+        }
+        function ship_move() {
+            if(ship.posX > 0 && dir["ArrowLeft"]) {
+                ship.posX--;
+            } else if(ship.posX + ship.w < spaces.w && dir["ArrowRight"]) {
+                ship.posX++;
+            }
+            ship.style.left=ship.posX+"px";
+        }
+
+        function sit_move(sit) {
+            if(sit.posY + sit.h > spaces.h) {
+                clearInterval(sit.move);
+                sit.remove();
+                game_over();
+                return;
+            }
+            sit.posY++;
+            sit.posX += getRand(-2,2);
+            if(sit.posX < 0) {
+                sit.posX=0;
+            } else if(sit.posX+sit.w > spaces.w) {
+                sit.posX = spaces.w-sit.w;
+            }
+            sit.style.left=sit.posX+"px";
+            sit.style.top=sit.posY+"px";
+        }
+        function sit_create() {
+            var s=document.createElement("img");
+            s.src="pic/pic/pic/sit.png";
+            s.className="sit";
+            s.w=60;
+            s.h=40;
+            s.posX=getRand(0,spaces.w - s.w);
+            s.posY=getRand(0,10);
+            document.getElementById("spaces").appendChild(s);
+            s.style.left=s.posX+"px";
+            s.style.top=s.posY+"px";
+            s.move=setInterval(sit_move,20,s);
+        }
+        function show_ranking() {
+            var ranking=sessionStorage.getItem("ranking");
+            if(ranking) {
+                document.getElementById("ranking").innerHTML="";
+                var data=Array.from(JSON.parse(ranking));
+                data.forEach((x)=>{
+                    var li=document.createElement("li");
+                    li.innerHTML=`<span style="width:150px">${x.name}</span> <span>用${x.time}秒</span> <span>得${x.score}分</span>`;
+                    document.getElementById("ranking").appendChild(li);
+                });
+            }
+        }
+        function do_ranking() {
+            var ranking=sessionStorage.getItem("ranking");
+            if(ranking==null) {
+                ranking=[];
+                ranking.push({"name":prompt("請輸入你的名稱："),"score":game_score,"time":game_time});
+                sessionStorage.setItem("ranking",JSON.stringify(ranking));
+            } else {
+                var data=Array.from(JSON.parse(ranking));
+                if(data.length<5) {
+                    data.push({"name":prompt("請輸入你的名稱："),"score":game_score,"time":game_time});
+                } else if(game_score > data[4].score) {
+                    data.pop();
+                    data.push({"name":prompt("請輸入你的名稱："),"score":game_score,"time":game_time});
+                }
+                data.sort((a,b)=>{
+                    return b.score-a.score;
+                });
+                sessionStorage.setItem("ranking",JSON.stringify(data));
+            }
+            show_ranking();
+        }
+    </script>
 </head>
-</html>
+<body onload="game_init()" onkeydown="mykeydown()" onkeyup="mykeyup()">
+    <div style="display:inline-block; width:800px;">
+        <div id="status">
+            <span>得分：<span id="score">0</span> 分</span>
+            <span style="float:right;">時間：<span id="game_time">0</span> 秒</span>
+        </div>
+        <div id="spaces">
+            <div id="ship"></div>
+            <!--img src="pic/ship.png" width="40px"-->
+        </div>
+        <button id="restart" onclick="game_init();">重新開始</button>
+    </div>
+    <div style="display:inline-block; height:820px; vertical-align:bottom; margin-left:10px;">
+        <div style="font-size:2em; font-weight:bolder;">排行榜</div>
+        <ol id="ranking"></ol>
+    </div>
+</body>

@@ -63,7 +63,7 @@
         }
         function game_over() {
             game_starting=false;
-            clearInterval(ship.move);
+            clearInterval(spaces.move);
             clearInterval(ufo_creater);
             clearInterval(game_timer);
             document.getElementById("spaces").style.animationPlayState="paused";
