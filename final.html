@@ -2,10 +2,10 @@
 <head>
     <title>期末小遊戲</title>
     <style>
-        #spaces {
+         #spaces {
             width:800px;
             height:800px;
-            background:url("pic/pic/pic/up.jpg");
+            background:url("pic/pic/pic/bg_stars.jpg");
             animation: bg_move 2s linear infinite;
             position: relative;
         }
@@ -13,19 +13,19 @@
             0% {background-position-y: 0px;}
             100% {background-position-y: 216px;}
         }
-        #ship{
+        #ship {
+            outline: 1px solid rgb(169, 209, 233);
             width: 40px;
             height: 60px;
             background: url("pic/pic/pic/ship.png");
             background-size: 40px 60px;
             position: absolute;
         }
-        .sit {
+        .ufo {
             width: 60px;
-            height: 60px;
+            height: 40px;
             position: absolute;
         }
-
     </style>
     <script>
         function game_init() {
@@ -48,29 +48,29 @@
                 game_time++;
                 document.getElementById("game_time").innerHTML=game_time;
             },1000);
-            Array.from(document.getElementsByClassName("sit")).forEach((space)=>{
-                s.pace.remove();
+            Array.from(document.getElementsByClassName("ufo")).forEach((u)=>{
+                u.remove();
             });
-            sit_creater=setInterval(sit_create,1000);
+            ufo_creater=setInterval(ufo_create,1000);
             game_starting=true;
             document.getElementById("restart").style.display="none";
         }
         function game_over() {
             game_starting=false;
-            clearInterval(ship.move);
-            clearInterval(sit_creater);
+            clearInterval(spaces.move);
+            clearInterval(ufo_creater);
             clearInterval(game_timer);
-            document.getElementById("space").style.animationPlayState="paused";
-            Array.from(document.getElementsByClassName("sit")).forEach((s)=>{
-                clearInterval(s.move);
+            document.getElementById("spaces").style.animationPlayState="paused";
+            Array.from(document.getElementsByClassName("ufo")).forEach((u)=>{
+                clearInterval(u.move);
             });
             document.getElementById("restart").style.display="block";
             do_ranking();
         }
-              function mykeydown() {
+        function mykeydown() {
             event.preventDefault();
-             if(Object.keys(dir).includes(event.key)) {
-            //} else if(event.key == "ArrowLeft" || event.key == "ArrowRight") {
+            if(Object.keys(dir).includes(event.key)) {
+            //} else if(event.key == "ArrorLeft" || event.key == "ArrowRight") {
                 dir[event.key]=1;
             }
         }
@@ -83,54 +83,72 @@
         function getRand(min,max) {
             return Math.floor(Math.random() * (max-min+1)) + min;
         }
-        function mykeyup() {
-            event.preventDefault();
-            if(Object.keys(dir).includes(event.key)) {
-                dir[event.key]=0;
-            }
-        }
-        function getRand(min,max) {
-            return Math.floor(Math.random() * (max-min+1)) + min;
-        }
+
         function ship_move() {
             if(ship.posX > 0 && dir["ArrowLeft"]) {
                 ship.posX--;
-            } else if(ship.posX + ship.w < spaces.w && dir["ArrowRight"]) {
+            }
+            if(ship.posX + ship.w < spaces.w && dir["ArrowRight"]) {
                 ship.posX++;
             }
+            if(ship.posY>0 && dir["ArrowUp"]){
+                ship.posY--;
+            }
+            if(ship.posY + ship.h < spaces.h && dir["ArrowDown"]){
+                ship.posY++;
+            }
             ship.style.left=ship.posX+"px";
+            ship.style.top=ship.posY+"px";
         }
 
-        function sit_move(sit) {
-            if(sit.posY + sit.h > spaces.h) {
-                clearInterval(sit.move);
-                sit.remove();
+        function ufo_move(ufo) {
+            if(ufo.posX<ship.posX+ship.w &&  ufo.posX + ufo.w > ship.posX 
+            && ufo.posY < ship.posY + ship.h && ufo.posY + ufo.h > ship.posY  ){
+                clearInterval(ufo.move);
                 game_over();
                 return;
             }
-            sit.posY++;
-            sit.posX += getRand(-2,2);
-            if(sit.posX < 0) {
-                sit.posX=0;
-            } else if(sit.posX+sit.w > spaces.w) {
-                sit.posX = spaces.w-sit.w;
+            if(ufo.posY + ufo.h > spaces.h) {
+                clearInterval(ufo.move);
+                ufo.remove();
             }
-            sit.style.left=sit.posX+"px";
-            sit.style.top=sit.posY+"px";
+            ufo.posY++;
+            ufo.posX += getRand(-2,2);
+            if(ufo.posX < 0) {
+                ufo.posX=0;
+            } else if(ufo.posX+ufo.w > spaces.w) {
+                ufo.posX = spaces.w-ufo.w;
+            }
+            ufo.style.left=ufo.posX+"px";
+            ufo.style.top=ufo.posY+"px";
         }
-        function sit_create() {
-            var s=document.createElement("img");
-            s.src="pic/pic/pic/sit.png";
-            s.className="sit";
-            s.w=60;
-            s.h=40;
-            s.posX=getRand(0,spaces.w - s.w);
-            s.posY=getRand(0,10);
-            document.getElementById("spaces").appendChild(s);
-            s.style.left=s.posX+"px";
-            s.style.top=s.posY+"px";
-            s.move=setInterval(sit_move,20,s);
+        function ufo_create() {
+            var u=document.createElement("img");
+            u.src="pic/pic/pic/ufo.png";
+            u.className="ufo";
+            u.w=60;
+            u.h=40;
+            u.posX=getRand(0,spaces.w - u.w);
+            u.posY=getRand(0,10);
+            document.getElementById("spaces").appendChild(u);
+            u.style.left=u.posX+"px";
+            u.style.top=u.posY+"px";
+            u.move=setInterval(ufo_move,20,u);
         }
+        function shoot() {
+            if(game_starting==false) return;
+            var b=document.createElement("div");
+            b.className="bullet";
+            b.w=4;
+            b.h=6;
+            b.posX=ship.posX+(ship.w-b.w)/2;
+            b.posY=ship.posY-b.h;
+            document.getElementById("spaces").appendChild(b);
+            b.style.left=b.posX+"px";
+            b.style.top=b.posY+"px";
+            b.move=setInterval(bullet_move,10,b);
+        }
+
         function show_ranking() {
             var ranking=sessionStorage.getItem("ranking");
             if(ranking) {
@@ -183,3 +201,4 @@
         <ol id="ranking"></ol>
     </div>
 </body>
+</html>
