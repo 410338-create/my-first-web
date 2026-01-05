@@ -26,6 +26,12 @@
             height: 40px;
             position: absolute;
         }
+        .ai {
+            width: 4px;
+            height: 4px;
+            background-color: rgb(248, 244, 4);
+            position: absolute;
+        }
     </style>
     <script>
         function game_init() {
@@ -51,7 +57,11 @@
             Array.from(document.getElementsByClassName("ufo")).forEach((u)=>{
                 u.remove();
             });
+            Array.from(document.getElementsByClassName("ai")).forEach((a)=>{
+                a.remove();
+            });
             ufo_creater=setInterval(ufo_create,1000);
+            ai_creater=setInterval(ai_create,1000);
             game_starting=true;
             document.getElementById("restart").style.display="none";
         }
@@ -59,6 +69,7 @@
             game_starting=false;
             clearInterval(spaces.move);
             clearInterval(ufo_creater);
+            clearInterval(ai_creater);
             clearInterval(game_timer);
             document.getElementById("spaces").style.animationPlayState="paused";
             Array.from(document.getElementsByClassName("ufo")).forEach((u)=>{
@@ -122,6 +133,32 @@
             ufo.style.left=ufo.posX+"px";
             ufo.style.top=ufo.posY+"px";
         }
+        function ai_move(a) {
+    // 碰撞偵測：如果船撞到黃色小點
+            if(a.posX < ship.posX + ship.w && a.posX + a.w > ship.posX 
+            && a.posY < ship.posY + ship.h && a.posY + a.h > ship.posY) {
+                game_score ++;
+                document.getElementById("score").innerHTML = game_score;
+                clearInterval(a.move); // 停止這個小點的計時器
+                a.remove();           // 讓小點消失
+                return;
+            }
+            if(a.posY > spaces.h) {
+        clearInterval(a.move);
+        a.remove();
+        return;
+            }if(a.posY > spaces.h) {
+                clearInterval(a.move);
+                a.remove();
+                return;
+            }
+    // 如果小點掉出畫面底部
+            if(a.posY > spaces.h) {
+                clearInterval(a.move);
+                a.remove();
+                return;
+            }
+}
         function ufo_create() {
             var u=document.createElement("img");
             u.src="pic/pic/pic/ufo.png";
@@ -135,20 +172,18 @@
             u.style.top=u.posY+"px";
             u.move=setInterval(ufo_move,20,u);
         }
-        function shoot() {
-            if(game_starting==false) return;
-            var b=document.createElement("div");
-            b.className="bullet";
-            b.w=4;
-            b.h=6;
-            b.posX=ship.posX+(ship.w-b.w)/2;
-            b.posY=ship.posY-b.h;
-            document.getElementById("spaces").appendChild(b);
-            b.style.left=b.posX+"px";
-            b.style.top=b.posY+"px";
-            b.move=setInterval(bullet_move,10,b);
+        function ai_create() {
+            var a=document.createElement("img");
+            a.src="pic/pic/pic/ai.png";
+            a.className="ai";
+            a.w=4;
+            a.h=4;
+            a.posX=getRand(0,spaces.w - a.w);
+            a.posY=getRand(0, spaces.h - a.h);
+            document.getElementById("spaces").appendChild(a);
+            a.style.left=a.posX+"px";
+            a.style.top=a.posY+"px";
         }
-
         function show_ranking() {
             var ranking=sessionStorage.getItem("ranking");
             if(ranking) {
@@ -184,7 +219,7 @@
         }
     </script>
 </head>
-<body onload="game_init()" onkeydown="mykeydown()" onkeyup="mykeyup()">
+<body onload="game_init()"onkeydown="mykeydown()" onkeyup="mykeyup() ">
     <div style="display:inline-block; width:800px;">
         <div id="status">
             <span>得分：<span id="score">0</span> 分</span>
