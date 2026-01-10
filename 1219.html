@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>快速 Google 搜尋</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
+        .search-box { display: flex; justify-content: center; gap: 10px; }
+        input { padding: 10px; width: 300px; font-size: 16px; }
+        button { padding: 10px 15px; background: #4285F4; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>點擊後直接跳轉 Google 搜尋</h1>
+
+    <div class="search-box">
+        <input id="keyword" placeholder="輸入關鍵字">
+        <button onclick="performGoogleSearch()">搜尋</button>
+    </div>
+
+    <script>
+        function performGoogleSearch() {
+            const keyword = document.getElementById("keyword").value;
+            if (keyword.trim() !== "") {
+                // 這就是關鍵：直接將瀏覽器導向 Google 搜尋結果頁面
+                window.location.href = "www.google.com" + encodeURIComponent(keyword);
+            }
+        }
+    </script>
+</body>
+</html>

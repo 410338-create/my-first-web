@@ -67,13 +67,16 @@
         }
         function game_over() {
             game_starting=false;
-            clearInterval(spaces.move);
+            clearInterval(ship.move);
             clearInterval(ufo_creater);
             clearInterval(ai_creater);
             clearInterval(game_timer);
             document.getElementById("spaces").style.animationPlayState="paused";
             Array.from(document.getElementsByClassName("ufo")).forEach((u)=>{
                 clearInterval(u.move);
+            });
+            Array.from(document.getElementsByClassName("ai")).forEach((a)=>{
+                clearInterval(a.move);
             });
             document.getElementById("restart").style.display="block";
             do_ranking();
@@ -136,9 +139,9 @@
         function ai_move(a) {
     // 碰撞偵測：如果船撞到黃色小點
             if(a.posX < ship.posX + ship.w && a.posX + a.w > ship.posX 
-            && a.posY < ship.posY + ship.h && a.posY + a.h > ship.posY) {
+             && a.posY < ship.posY + ship.h && a.posY + a.h > ship.posY) {
                 game_score ++;
-                document.getElementById("score").innerHTML = game_score;
+                document.getElementById("score").innerHTML = game_score; 
                 clearInterval(a.move); // 停止這個小點的計時器
                 a.remove();           // 讓小點消失
                 return;
@@ -151,14 +154,11 @@
                 clearInterval(a.move);
                 a.remove();
                 return;
+                game_score++;
+                document.getElementById("score").innerHTML = game_score;
             }
+        }
     // 如果小點掉出畫面底部
-            if(a.posY > spaces.h) {
-                clearInterval(a.move);
-                a.remove();
-                return;
-            }
-}
         function ufo_create() {
             var u=document.createElement("img");
             u.src="pic/pic/pic/ufo.png";
@@ -183,6 +183,7 @@
             document.getElementById("spaces").appendChild(a);
             a.style.left=a.posX+"px";
             a.style.top=a.posY+"px";
+            a.move = setInterval(ai_move, 20, a);
         }
         function show_ranking() {
             var ranking=sessionStorage.getItem("ranking");
